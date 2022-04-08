@@ -59,10 +59,12 @@ CHROME_PATH = "google-chrome"
 CHROME_DRIVER_PATH = "chromedriver"
 
 
-# # reading data
+# reading data
 df = pd.read_csv(DATA_PATH)
 
-# # Initializing a headless browser for selenium
+# Initializing a headless browser for selenium
+# Selenium is used instead of requests lib, because
+# Ted webpage loads transcripts after loading main website (JS Async)
 browser_options = webdriver.ChromeOptions()
 browser_options.add_argument('--headless')
 browser_options.add_argument('--no-sandbox')
@@ -71,7 +73,7 @@ browser_options.add_argument("--lang=en-US")  # making sure we get english trans
 browser_service = Service(CHROME_DRIVER_PATH)
 
 
-# # running multi-threaded to increase speed
+# running multi-threaded to increase speed
 with ProcessPoolExecutor(max_workers=5) as executor:
     # initiating threads
     results = [executor.submit(get_transcript, index, row['link']) for index, row in df.iterrows()]
@@ -83,8 +85,8 @@ with ProcessPoolExecutor(max_workers=5) as executor:
                 print(
                     f'Completed: {index},\t Remaining: {len(df) - len(df.loc[~df["transcript"].isnull()])}'
                 )
-        except WebDriverException:
-            pass  # ignoring chromedriver errors
+        except WebDriverException as e:
+            print(e)  # ignoring chromedriver errors to continue the runs
 
 # saving new data
 df.to_csv("data_with_transcript.csv", index=False)
