@@ -2,3 +2,6 @@ pandas
 BeautifulSoup4
 selenium
 elasticsearch
+fasttext
+rich
+ipywidgets
