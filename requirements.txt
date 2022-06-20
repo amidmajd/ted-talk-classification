@@ -5,3 +5,5 @@ elasticsearch
 fasttext
 rich
 ipywidgets
+gensim
+sklearn
